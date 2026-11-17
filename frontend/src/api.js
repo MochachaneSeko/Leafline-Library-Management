@@ -1,7 +1,9 @@
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export async function api(path, options = {}) {
   const token = localStorage.getItem('library_token');
+
   const response = await fetch(`${API_URL}${path}`, {
     ...options,
     headers: {
@@ -10,7 +12,14 @@ export async function api(path, options = {}) {
       ...(options.headers || {})
     }
   });
-  const data = response.status === 204 ? null : await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data?.message || 'The request could not be completed.');
+
+  const data = response.status === 204
+    ? null
+    : await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data?.message || 'The request could not be completed.');
+  }
+
   return data;
 }
